@@ -7,6 +7,9 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  # Build weekly at 05.07 on Monday morning
+  schedule:
+    - cron: '7 5 * * 1'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
