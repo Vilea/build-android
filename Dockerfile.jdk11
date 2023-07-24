@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Freely taken and upgraded from
 # 1. https://github.com/bitrise-io/bitrise-base/blob/master/Dockerfile
@@ -31,16 +31,16 @@ RUN apt update -q && \
 	libqt5widgets5 \
 	locales \
 	net-tools \
+	openjdk-11-jdk \
 	software-properties-common \
 	rsync \
+	ruby ruby-dev \
 	tree \
 	unzip \
 	wget \
 	zip \
 	&& \
 	locale-gen en_US.UTF-8 && \
-	add-apt-repository ppa:openjdk-r/ppa && \
-	apt install -y openjdk-11-jdk && \
 	mv /etc/ssl/certs/java/cacerts /etc/ssl/certs/java/cacerts.old && \
 	keytool -importkeystore -destkeystore /etc/ssl/certs/java/cacerts -deststoretype jks -deststorepass changeit -srckeystore /etc/ssl/certs/java/cacerts.old -srcstoretype pkcs12 -srcstorepass changeit && \
 	rm /etc/ssl/certs/java/cacerts.old && \
@@ -58,9 +58,10 @@ RUN apt update -q && \
 	apt autoremove -y && \
 	apt autoclean -y && \
 	rm -rf /var/lib/apt/lists/* && \
-	wget -q https://github.com/google/bundletool/releases/download/1.11.0/bundletool-all-1.15.2.jar -O /root/bundletool-all.jar && \
+	wget -q https://github.com/google/bundletool/releases/download/1.15.2/bundletool-all-1.15.2.jar -O /root/bundletool-all.jar && \
 	/bin/echo -e '#!/bin/bash\njava -jar /root/bundletool-all.jar $*' > /usr/bin/bundletool && \
-	chmod +x /usr/bin/bundletool
+	chmod +x /usr/bin/bundletool && \
+	gem install fastlane
 
 WORKDIR /app
 
