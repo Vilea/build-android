@@ -47,7 +47,7 @@ RUN apt update -q && \
 	update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac && \
 	update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java && \
 	cd /opt && \
-	wget -q https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O android-commandline-tools.zip && \
+	wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O android-commandline-tools.zip && \
 	mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
 	unzip -q android-commandline-tools.zip -d /tmp/ && \
 	mv /tmp/cmdline-tools/ ${ANDROID_SDK_ROOT}/cmdline-tools/latest && \
@@ -58,7 +58,7 @@ RUN apt update -q && \
 	apt autoremove -y && \
 	apt autoclean -y && \
 	rm -rf /var/lib/apt/lists/* && \
-	wget -q https://github.com/google/bundletool/releases/download/1.11.0/bundletool-all-1.11.0.jar -O /root/bundletool-all.jar && \
+	wget -q https://github.com/google/bundletool/releases/download/1.11.0/bundletool-all-1.15.2.jar -O /root/bundletool-all.jar && \
 	/bin/echo -e '#!/bin/bash\njava -jar /root/bundletool-all.jar $*' > /usr/bin/bundletool && \
 	chmod +x /usr/bin/bundletool
 
