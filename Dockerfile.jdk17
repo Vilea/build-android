@@ -60,7 +60,8 @@ RUN apt update -q && \
 	rm -rf /var/lib/apt/lists/* && \
 	wget -q https://github.com/google/bundletool/releases/download/1.15.2/bundletool-all-1.15.2.jar -O /root/bundletool-all.jar && \
 	/bin/echo -e '#!/bin/bash\njava -jar /root/bundletool-all.jar $*' > /usr/bin/bundletool && \
-	chmod +x /usr/bin/bundletool
+	chmod +x /usr/bin/bundletool && \
+	gem install fastlane
 
 WORKDIR /app
 
