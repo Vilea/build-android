@@ -1,0 +1,67 @@
+FROM ubuntu:22.04
+
+# Freely taken and upgraded from
+# 1. https://github.com/bitrise-io/bitrise-base/blob/master/Dockerfile
+# 2. https://github.com/bitrise-io/android/blob/master/Dockerfile
+
+ENV LANG="en_US.UTF-8" \
+	LANGUAGE="en_US.UTF-8" \
+	LC_ALL="en_US.UTF-8" \
+	DEBIAN_FRONTEND=noninteractive \
+	ANDROID_SDK_ROOT=/opt/android-sdk-linux \
+	ANDROID_HOME=/opt/android-sdk-linux \
+	PATH=${PATH}:${ANDROID_SDK_ROOT}/platform-tools:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin \
+	JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
+	QT_QPA_PLATFORM=offscreen \
+	LD_LIBRARY_PATH=${ANDROID_SDK_ROOT}/emulator/lib64:${ANDROID_SDK_ROOT}/emulator/lib64/qt/lib \
+	APKINFO_TOOLS=/opt/apktools
+
+RUN apt update -q && \
+	apt upgrade -y && \
+	apt install -y \
+	apt-transport-https \
+	build-essential \
+	ca-certificates \
+	clang \
+	curl \
+	git \
+	groff \
+	imagemagick \
+	jq \
+	libqt5widgets5 \
+	locales \
+	net-tools \
+	openjdk-17-jdk \
+	software-properties-common \
+	rsync \
+	ruby ruby-dev \
+	tree \
+	unzip \
+	wget \
+	zip \
+	&& \
+	locale-gen en_US.UTF-8 && \
+	mv /etc/ssl/certs/java/cacerts /etc/ssl/certs/java/cacerts.old && \
+	keytool -importkeystore -destkeystore /etc/ssl/certs/java/cacerts -deststoretype jks -deststorepass changeit -srckeystore /etc/ssl/certs/java/cacerts.old -srcstoretype pkcs12 -srcstorepass changeit && \
+	rm /etc/ssl/certs/java/cacerts.old && \
+	update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac && \
+	update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java && \
+	cd /opt && \
+	wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O android-commandline-tools.zip && \
+	mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
+	unzip -q android-commandline-tools.zip -d /tmp/ && \
+	mv /tmp/cmdline-tools/ ${ANDROID_SDK_ROOT}/cmdline-tools/latest && \
+	rm android-commandline-tools.zip && ls -la ${ANDROID_SDK_ROOT}/cmdline-tools/latest/ && \
+	yes | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --licenses && \
+	touch /root/.android/repositories.cfg && \
+	yes | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --update --channel=0 && \
+	apt autoremove -y && \
+	apt autoclean -y && \
+	rm -rf /var/lib/apt/lists/* && \
+	wget -q https://github.com/google/bundletool/releases/download/1.15.2/bundletool-all-1.15.2.jar -O /root/bundletool-all.jar && \
+	/bin/echo -e '#!/bin/bash\njava -jar /root/bundletool-all.jar $*' > /usr/bin/bundletool && \
+	chmod +x /usr/bin/bundletool
+
+WORKDIR /app
+
+CMD bash
